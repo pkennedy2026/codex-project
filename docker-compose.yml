@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: kennet-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kennet
+      POSTGRES_USER: kennet
+      POSTGRES_PASSWORD: kennet
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: kennet-backend
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://kennet:kennet@db:5432/kennet
+      PORT: 3000
+      JWT_SECRET: change-me-in-prod
+      TYPEORM_SYNC: "false"
+    ports:
+      - "3000:3000"
+    command: ["node", "dist/main.js"]
+
+  frontend:
+    build: ./frontend
+    container_name: kennet-frontend
+    depends_on:
+      - backend
+    ports:
+      - "4173:4173"
+
+volumes:
+  db_data:
