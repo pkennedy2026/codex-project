@@ -95,6 +95,18 @@ Downloads
 ---------
 The full platform documentation is in `frontend/public/downloads/KenNet-Platform-Documentation.md` and will be available at `/downloads/KenNet-Platform-Documentation.md` after a frontend build/deploy.
 
+Compose (dev/staging)
+---------------------
+- Build backend dist first (outside compose): `cd backend && npm install && npm run build`.
+- Start DB only: `docker compose up -d db`.
+- Bring up backend/frontend after dist exists: `docker compose up --build backend frontend`.
+- For production-like frontend, ensure the Dockerfile builds and serves `dist` (current image uses `serve -s dist -l 4173`).
+
+Recommended next implementation tasks
+-------------------------------------
+1) Backend: add real `.env` (JWT secret, DB URL), generate/apply TypeORM migrations (keep `TYPEORM_SYNC=false`), implement DTO validation and auth/tenant guards, wire services/repositories.
+2) Frontend: set `VITE_API_BASE_URL`, wire pages to backend APIs, implement login/token handling, and adjust routes/role guards.
+3) Infra/CI: add pipeline to lint/test/build, run migrations, and publish images; manage secrets outside source; add health checks/rate limiting/CORS hardening.
 Next implementation steps
 -------------------------
 - Flesh out backend DTOs/entities, connect to Postgres, and add auth/tenant guards.
