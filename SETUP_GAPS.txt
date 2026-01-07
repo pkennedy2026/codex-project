@@ -1,0 +1,35 @@
+KenNet project: what is NOT configured yet (quick checklist)
+
+Backend (NestJS)
+- .env is not present: copy backend/.env.example (or .env.production.sample) to backend/.env and set DATABASE_URL, JWT_SECRET, SEED_ADMIN_EMAIL/SEED_ADMIN_PASSWORD, and TYPEORM_SYNC (enable only for first schema creation).
+- Postgres is expected (docker-compose.yml) but no migrations have been generated/applied; TYPEORM_SYNC is set to "false" in compose, so migrations must be created and run before the service will work.
+- dist/ build is required before running the container command ["node","dist/main.js"]; ensure npm run build (and seeds) run in CI or via a Docker build step.
+- Auth/guards/DTO validation in modules are still placeholders; routes need real implementations and role/tenant enforcement.
+- Seed script exists but depends on a built dist; SEED_* envs need to be set and the seed invoked.
+
+Frontend (React/Vite)
+- API base URL/envs are not finalized; pages/components are placeholders and not wired to live backend endpoints.
+- No production build/config in compose (frontend service exposes 4173 but assumes a dev server); add a production build (npm run build) and serve the dist directory or switch to a proper static server.
+- Design/auth flows are stubbed; no real login/session handling against the backend.
+
+Infra / docker-compose
+- Compose builds backend from ./backend and runs dist/main.js but does not build frontend assets or serve them from a static server.
+- No volume/bind mounts for backend env files or secrets; JWT_SECRET and database credentials are defaults and need hardening for any deployment.
+
+Docs / downloads
+- The referenced KenNet-Platform-Documentation.md is not present in this repo’s frontend public/downloads folder; add it there (or in frontend/public/downloads) and ensure the app serves static assets, then publish/redeploy.
+
+Python CLI (isp_manager.py)
+- Works locally with SQLite, but it is standalone and not integrated with the Nest backend or Postgres.
+- No auth or web UI; it remains a separate CLI tool.
+
+Other
+- LAB-TESTING-ME/ and .tools/ are present but not documented in README/ARCHITECTURE; clarify or remove as needed.
+- CI/CD not configured; no lint/test/build pipeline defined.
+
+Next actions to make the stack runnable end-to-end
+1) Add backend/.env with real secrets and run migrations (or temporarily enable TYPEORM_SYNC for first run, then disable). Build dist before container start.
+2) Add frontend env (e.g., VITE_API_BASE_URL) and wire pages to backend APIs; add a production build/serve step in compose or a separate static host.
+3) Place KenNet-Platform-Documentation.md into frontend/public/downloads and redeploy to make it downloadable.
+4) Add auth flows (register/login) and role/tenant guards in backend and hook the frontend login to them.
+5) Add CI/CD to run tests, build backend/frontend, apply migrations, and package images.
