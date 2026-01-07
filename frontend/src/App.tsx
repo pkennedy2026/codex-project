@@ -100,9 +100,7 @@ const AuthPage = () => {
       >
         <div style={{ marginBottom: 16 }}>
           <div style={{ fontSize: 22, fontWeight: 700 }}>KenNet Login</div>
-          <div style={{ fontSize: 13, color: '#94a3b8' }}>
-            Sign in to call the Nest API (Bearer token = user id for now).
-          </div>
+          <div style={{ fontSize: 13, color: '#94a3b8' }}>Sign in to call the Nest API.</div>
         </div>
         <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 12 }}>
           {mode === 'register' && (

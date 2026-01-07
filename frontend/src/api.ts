@@ -1,9 +1,13 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_API_URL ||
+  'http://localhost:3000/api';
 
 type HttpMethod = 'GET' | 'POST';
 
 async function request<T>(path: string, method: HttpMethod = 'GET', body?: unknown, token?: string): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
+  const url = `${API_URL.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+  const res = await fetch(url, {
     method,
     headers: {
       'Content-Type': 'application/json',
@@ -12,8 +16,15 @@ async function request<T>(path: string, method: HttpMethod = 'GET', body?: unkno
     body: body ? JSON.stringify(body) : undefined,
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || res.statusText);
+    let message = res.statusText;
+    try {
+      const data = await res.json();
+      message = data.message || data.error || JSON.stringify(data);
+    } catch {
+      const text = await res.text();
+      if (text) message = text;
+    }
+    throw new Error(message || 'Request failed');
   }
   return res.json() as Promise<T>;
 }
