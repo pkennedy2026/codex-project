@@ -17,7 +17,7 @@ Infra / docker-compose
 - No volume/bind mounts for backend env files or secrets; JWT_SECRET and database credentials are defaults and need hardening for any deployment.
 
 Docs / downloads
-- The referenced KenNet-Platform-Documentation.md is not present in this repo’s frontend public/downloads folder; add it there (or in frontend/public/downloads) and ensure the app serves static assets, then publish/redeploy.
+- KenNet-Platform-Documentation.md is present in frontend/public/downloads; build and deploy the frontend so /downloads/KenNet-Platform-Documentation.md is served.
 
 Python CLI (isp_manager.py)
 - Works locally with SQLite, but it is standalone and not integrated with the Nest backend or Postgres.
@@ -30,6 +30,5 @@ Other
 Next actions to make the stack runnable end-to-end
 1) Add backend/.env with real secrets and run migrations (or temporarily enable TYPEORM_SYNC for first run, then disable). Build dist before container start.
 2) Add frontend env (e.g., VITE_API_BASE_URL) and wire pages to backend APIs; add a production build/serve step in compose or a separate static host.
-3) Place KenNet-Platform-Documentation.md into frontend/public/downloads and redeploy to make it downloadable.
-4) Add auth flows (register/login) and role/tenant guards in backend and hook the frontend login to them.
-5) Add CI/CD to run tests, build backend/frontend, apply migrations, and package images.
+3) Add auth flows (register/login) and role/tenant guards in backend and hook the frontend login to them.
+4) Add CI/CD to run tests, build backend/frontend, apply migrations, and package images.

@@ -81,11 +81,19 @@ Quick start (once Node/NPM are available)
 - Frontend: `cd frontend && npm install && npm run dev`.
 - Database: `docker-compose up db` (Postgres exposed on 5432 with user/db/password `kennet`).
 - First run with Postgres:
-  1. Copy `backend/.env.example` to `backend/.env`; leave `DATABASE_URL` as-is for local Docker (`postgres://kennet:kennet@localhost:5432/kennet`). Keep `TYPEORM_SYNC=true` for first boot to let TypeORM create tables (turn off afterward or use migrations).
+  1. Copy `backend/.env.example` to `backend/.env`; set `JWT_SECRET`, and decide on `TYPEORM_SYNC` (`true` only for first boot). For local Docker DB use `DATABASE_URL=postgres://kennet:kennet@localhost:5432/kennet`.
   2. Start the DB: `docker compose up -d db`.
-  3. Start backend: `cd backend && npm run start:dev` (or `npm run start`). This will sync the schema when `TYPEORM_SYNC=true`. Alternatively, turn sync off and run the initial migration: `npm run build && npm run migration:run`.
-  4. Seed an admin: `cd backend && node dist/seeds/seed.js` (after `npm run build` if `dist` is missing). Uses `SEED_ADMIN_EMAIL/SEED_ADMIN_PASSWORD` from `.env`.
-  5. Frontend: `cd frontend && npm run dev -- --host`.
+  3. Start backend (sync path): `cd backend && npm run start:dev` with `TYPEORM_SYNC=true` only for the first schema creation. Preferred path afterward: `npm run build && npm run migration:run` with `TYPEORM_SYNC=false`.
+  4. Seed an admin after build: `cd backend && node dist/seeds/seed.js` (needs `SEED_ADMIN_EMAIL/SEED_ADMIN_PASSWORD` in `.env`).
+  5. Frontend: `cd frontend && npm run dev -- --host`; set `VITE_API_BASE_URL` in `.env.local` (see `frontend/.env.local.example`).
+
+Frontend env (example)
+----------------------
+Copy `frontend/.env.local.example` to `frontend/.env.local` and set `VITE_API_BASE_URL` to your backend URL (e.g., `http://localhost:3000` or the compose backend service).
+
+Downloads
+---------
+The full platform documentation is in `frontend/public/downloads/KenNet-Platform-Documentation.md` and will be available at `/downloads/KenNet-Platform-Documentation.md` after a frontend build/deploy.
 
 Next implementation steps
 -------------------------
